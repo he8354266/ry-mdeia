@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.WaterfallInfoMapper">
+    
+    <resultMap type="WaterfallInfo" id="WaterfallInfoResult">
+        <result property="id"    column="id"    />
+        <result property="number"    column="number"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="introduce"    column="introduce"    />
+        <result property="detailsImg"    column="details_img"    />
+        <result property="address"    column="address"    />
+        <result property="feature"    column="feature"    />
+        <result property="free"    column="free"    />
+        <result property="suggest"    column="suggest"    />
+        <result property="video"    column="video"    />
+        <result property="category"    column="category"    />
+        <result property="validateInfo"    column="validate_info"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectWaterfallInfoVo">
+        select id, number, nick_name, introduce, details_img, address, feature, free, suggest, video, category, validate_info, create_by, create_time, update_by, update_time, remark from ry_waterfall_info
+    </sql>
+
+    <select id="selectWaterfallInfoList" parameterType="WaterfallInfo" resultMap="WaterfallInfoResult">
+        <include refid="selectWaterfallInfoVo"/>
+        <where>
+            <if test="number != null  and number != ''"> and number = #{number}</if>
+            <if test="nickName != null  and nickName != ''"> and nick_name like concat('%', #{nickName}, '%')</if>
+            <if test="introduce != null  and introduce != ''"> and desc = #{introduce}</if>
+            <if test="detailsImg != null  and detailsImg != ''"> and details_img = #{detailsImg}</if>
+            <if test="address != null "> and address = #{address}</if>
+            <if test="feature != null "> and feature = #{feature}</if>
+            <if test="free != null "> and free = #{free}</if>
+            <if test="suggest != null "> and suggest = #{suggest}</if>
+            <if test="video != null  and video != ''"> and video = #{video}</if>
+            <if test="category != null "> and category = #{category}</if>
+            <if test="validateInfo != null  and validateInfo != ''"> and validate_info = #{validateInfo}</if>
+        </where>
+    </select>
+
+    <select id="selectWaterfallInfoById" parameterType="Long" resultMap="WaterfallInfoResult">
+        <include refid="selectWaterfallInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertWaterfallInfo" parameterType="WaterfallInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into ry_waterfall_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="number != null">number,</if>
+            <if test="nickName != null">nick_name,</if>
+            <if test="introduce != null">introduce,</if>
+            <if test="detailsImg != null">details_img,</if>
+            <if test="address != null">address,</if>
+            <if test="feature != null">feature,</if>
+            <if test="free != null">free,</if>
+            <if test="suggest != null">suggest,</if>
+            <if test="video != null">video,</if>
+            <if test="category != null">category,</if>
+            <if test="validateInfo != null">validate_info,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="number != null">#{number},</if>
+            <if test="nickName != null">#{nick_name},</if>
+            <if test="introduce != null">#{introduce},</if>
+            <if test="detailsImg != null">#{detailsImg},</if>
+            <if test="address != null">#{address},</if>
+            <if test="feature != null">#{feature},</if>
+            <if test="free != null">#{free},</if>
+            <if test="suggest != null">#{suggest},</if>
+            <if test="video != null">#{video},</if>
+            <if test="category != null">#{category},</if>
+            <if test="validateInfo != null">#{validateInfo},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWaterfallInfo" parameterType="WaterfallInfo">
+        update ry_waterfall_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="number != null">number = #{number},</if>
+            <if test="nickName != null">nick_name = #{nickName},</if>
+            <if test="introduce != null">desc = #{introduce},</if>
+            <if test="detailsImg != null">details_img = #{detailsImg},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="feature != null">feature = #{feature},</if>
+            <if test="free != null">free = #{free},</if>
+            <if test="suggest != null">suggest = #{suggest},</if>
+            <if test="video != null">video = #{video},</if>
+            <if test="category != null">category = #{category},</if>
+            <if test="validateInfo != null">validate_info = #{validateInfo},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWaterfallInfoById" parameterType="Long">
+        delete from ry_waterfall_info where id = #{id}
+    </delete>
+
+    <delete id="deleteWaterfallInfoByIds" parameterType="String">
+        delete from ry_waterfall_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

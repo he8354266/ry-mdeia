@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PwdManagerMapper">
+    
+    <resultMap type="PwdManager" id="PwdManagerResult">
+        <result property="id"    column="id"    />
+        <result property="password"    column="password"    />
+    </resultMap>
+
+    <sql id="selectPwdManagerVo">
+        select id, password from ry_pwd_manager
+    </sql>
+
+    <select id="selectPwdManagerList" parameterType="PwdManager" resultMap="PwdManagerResult">
+        <include refid="selectPwdManagerVo"/>
+        <where>  
+            <if test="password != null  and password != ''"> and password = #{password}</if>
+        </where>
+    </select>
+    
+    <select id="selectPwdManagerById" parameterType="Long" resultMap="PwdManagerResult">
+        <include refid="selectPwdManagerVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPwdManager" parameterType="PwdManager" useGeneratedKeys="true" keyProperty="id">
+        insert into ry_pwd_manager
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="password != null">password,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="password != null">#{password},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePwdManager" parameterType="PwdManager">
+        update ry_pwd_manager
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="password != null">password = #{password},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePwdManagerById" parameterType="Long">
+        delete from ry_pwd_manager where id = #{id}
+    </delete>
+
+    <delete id="deletePwdManagerByIds" parameterType="String">
+        delete from ry_pwd_manager where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

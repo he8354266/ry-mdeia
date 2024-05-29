@@ -1,0 +1,51 @@
+/** 编号 */
+private Long id;
+
+/** 编号 */
+@Excel(name = "编号")
+private String number;
+
+/** 昵称 */
+@Excel(name = "昵称")
+private String name;
+
+/** 介绍 */
+@Excel(name = "介绍")
+private String desc;
+
+/** 详情图片 */
+@Excel(name = "详情图片")
+private String detailsImg;
+
+/** 地点 */
+@Excel(name = "地点")
+private Integer address;
+
+/** 特色 */
+@Excel(name = "特色")
+private Integer feature;
+
+/** 上新时间 */
+@Excel(name = "上新时间")
+@TableField(exist = false)
+private Integer groundTime;
+
+/** 是否空闲 0：空闲   1：空闲 */
+@Excel(name = "是否空闲 0：空闲   1：空闲")
+private Integer free;
+
+/** 是否推荐 0：不推荐  1：推荐 */
+@Excel(name = "是否推荐 0：不推荐  1：推荐")
+private Integer suggest;
+
+/** 视频 */
+@Excel(name = "视频")
+private String video;
+
+/** 分类 */
+@Excel(name = "分类")
+private Integer category;
+
+/** 验证信息 */
+@Excel(name = "验证信息")
+private String validateInfo;

@@ -1,0 +1,27 @@
+{
+	"total": 1,
+	"rows": [
+			{
+					"id": 1,
+					"number": "1121",
+					"nickName": "嘻嘻嘻",
+					"introduce": "预定",
+					"detailsImg": "/profile/upload/2024/02/28/u=1814561676,2470063876&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto_20240228170354A024.jpeg",
+					"address": 1,
+					"feature": 0,
+					"groundTime": null,
+					"free": false,
+					"suggest": false,
+					"video": null,
+					"category": 2,
+					"validateInfo": "0",
+					"createBy": "",
+					"createTime": null,
+					"updateBy": "",
+					"updateTime": null,
+					"remark": "3333"
+			}
+	],
+	"code": 200,
+	"msg": "查询成功"
+}
