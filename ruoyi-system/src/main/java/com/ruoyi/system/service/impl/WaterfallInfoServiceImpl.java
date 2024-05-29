@@ -38,73 +38,7 @@ public class WaterfallInfoServiceImpl extends
   @Resource
   private IMediaManagerService mediaManagerService;
 
-  /**
-   * 查询waterfall
-   *
-   * @param id waterfall主键
-   * @return waterfall
-   */
-  @Override
-  public WaterfallInfo selectWaterfallInfoById(Long id) {
-    return waterfallInfoMapper.selectWaterfallInfoById(id);
-  }
 
-  /**
-   * 查询waterfall列表
-   *
-   * @param waterfallInfo waterfall
-   * @return waterfall
-   */
-  @Override
-  public List<WaterfallInfo> selectWaterfallInfoList(WaterfallInfo waterfallInfo) {
-    return waterfallInfoMapper.selectWaterfallInfoList(waterfallInfo);
-  }
-
-  /**
-   * 新增waterfall
-   *
-   * @param waterfallInfo waterfall
-   * @return 结果
-   */
-  @Override
-  public int insertWaterfallInfo(WaterfallInfo waterfallInfo) {
-    waterfallInfo.setCreateTime(DateUtils.getNowDate());
-    return waterfallInfoMapper.insertWaterfallInfo(waterfallInfo);
-  }
-
-  /**
-   * 修改waterfall
-   *
-   * @param waterfallInfo waterfall
-   * @return 结果
-   */
-  @Override
-  public int updateWaterfallInfo(WaterfallInfo waterfallInfo) {
-    waterfallInfo.setUpdateTime(DateUtils.getNowDate());
-    return waterfallInfoMapper.updateWaterfallInfo(waterfallInfo);
-  }
-
-  /**
-   * 批量删除waterfall
-   *
-   * @param ids 需要删除的waterfall主键
-   * @return 结果
-   */
-  @Override
-  public int deleteWaterfallInfoByIds(Long[] ids) {
-    return waterfallInfoMapper.deleteWaterfallInfoByIds(ids);
-  }
-
-  /**
-   * 删除waterfall信息
-   *
-   * @param id waterfall主键
-   * @return 结果
-   */
-  @Override
-  public int deleteWaterfallInfoById(Long id) {
-    return waterfallInfoMapper.deleteWaterfallInfoById(id);
-  }
 
   @Override
   @Transactional(rollbackFor = Exception.class)
