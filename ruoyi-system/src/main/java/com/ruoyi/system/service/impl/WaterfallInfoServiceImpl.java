@@ -1,7 +1,10 @@
 package com.ruoyi.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.system.domain.MediaManager;
 import com.ruoyi.system.domain.PwdManager;
 import com.ruoyi.system.domain.WaterfallInfo;
@@ -106,11 +109,27 @@ public class WaterfallInfoServiceImpl extends
   @Override
   @Transactional(rollbackFor = Exception.class)
   public int removeIds(List<Long> list) {
+    FileUtils fileUtils = new FileUtils();
     waterfallInfoService.removeByIds(list);
     for (Long aLong : list) {
       //删除多媒体
-      mediaManagerService.remove(new QueryWrapper<MediaManager>().eq("waterfall_id", aLong));
+      List<MediaManager> managerList = mediaManagerService.lambdaQuery()
+          .eq(MediaManager::getWaterfallId, aLong).list();
+      if (CollectionUtils.isNotEmpty(managerList)) {
+        for (MediaManager mediaManager : managerList) {
+          mediaManagerService.removeById(mediaManager.getId());
+          //删除文件
+          if (ObjectUtils.isNotEmpty(mediaManager.getImg()) && ObjectUtils.isEmpty(
+              mediaManager.getVideo())) {
+            fileUtils.deleteFile(mediaManager.getImg());
+          } else if (ObjectUtils.isEmpty(mediaManager.getImg()) && ObjectUtils.isNotEmpty(
+              mediaManager.getVideo())) {
+            fileUtils.deleteFile(mediaManager.getVideo());
+          }
+        }
+      }
     }
+
     return 1;
   }
 }
