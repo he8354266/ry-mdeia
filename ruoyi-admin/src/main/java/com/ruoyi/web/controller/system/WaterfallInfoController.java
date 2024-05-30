@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.system.domain.MediaManager;
 import com.ruoyi.system.domain.WaterfallInfo;
 import com.ruoyi.system.service.IMediaManagerService;
@@ -17,6 +19,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -103,6 +106,8 @@ public class WaterfallInfoController extends BaseController {
           .list();
       waterfallInfo.setImgList(imgList);
       waterfallInfo.setVideoList(videoList);
+      waterfallInfo.setImgNum(imgList.size());
+      waterfallInfo.setVideoNum(videoList.size());
     }
     return success(waterfallInfo);
   }
@@ -115,17 +120,20 @@ public class WaterfallInfoController extends BaseController {
   public AjaxResult add(@RequestBody WaterfallInfo waterfallInfo) {
     waterfallInfo.setCreateTime(new Date());
     waterfallInfo.setCreateBy(SecurityUtils.getUsername());
+    waterfallInfoService.save(waterfallInfo);
     if (CollectionUtils.isNotEmpty(waterfallInfo.getImgList())) {
       for (MediaManager media : waterfallInfo.getImgList()) {
+        media.setWaterfallId(waterfallInfo.getId());
         mediaManagerService.saveOrUpdate(media);
       }
     }
     if (CollectionUtils.isNotEmpty(waterfallInfo.getVideoList())) {
       for (MediaManager media : waterfallInfo.getVideoList()) {
+        media.setWaterfallId(waterfallInfo.getId());
         mediaManagerService.saveOrUpdate(media);
       }
     }
-    return toAjax(waterfallInfoService.save(waterfallInfo));
+    return AjaxResult.success();
   }
 
   /**
@@ -136,6 +144,7 @@ public class WaterfallInfoController extends BaseController {
   public AjaxResult edit(@RequestBody WaterfallInfo waterfallInfo) {
     waterfallInfo.setUpdateTime(new Date());
     waterfallInfo.setUpdateBy(SecurityUtils.getUsername());
+    waterfallInfoService.saveOrUpdate(waterfallInfo);
     if (CollectionUtils.isNotEmpty(waterfallInfo.getImgList())) {
       for (MediaManager media : waterfallInfo.getImgList()) {
         mediaManagerService.saveOrUpdate(media);
@@ -146,7 +155,27 @@ public class WaterfallInfoController extends BaseController {
         mediaManagerService.saveOrUpdate(media);
       }
     }
-    return toAjax(waterfallInfoService.saveOrUpdate(waterfallInfo));
+    return AjaxResult.success();
+  }
+
+  /**
+   * 删除img
+   */
+  @Log(title = "waterfall", businessType = BusinessType.DELETE)
+  @GetMapping(value = "/delmediaManager")
+  @Transactional(rollbackFor = Exception.class)
+  public AjaxResult delmediaManager(MediaManager mediaManager) {
+    MediaManager manager = mediaManagerService.getById(mediaManager.getId());
+    if (ObjectUtils.isEmpty(manager)) {
+      throw new ServiceException("不存在该媒体信息");
+    }
+    if (ObjectUtils.isNotEmpty(manager.getImg())) {
+      FileUtils.deleteFile(manager.getImg());
+    }
+    if (ObjectUtils.isNotEmpty(manager.getVideo())) {
+      FileUtils.deleteFile(manager.getVideo());
+    }
+    return toAjax(mediaManagerService.removeById(mediaManager.getId()));
   }
 
   /**
