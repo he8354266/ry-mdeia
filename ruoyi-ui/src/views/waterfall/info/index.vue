@@ -32,7 +32,7 @@
       <el-table-column label="封面图片" align="center" prop="video">
         <template slot-scope="scope">
           <div style="width: 100%;display: flex; justify-content: center;">
-            <img style="display:block;width: auto;height: 80px;" v-if="scope.row.titleImg" :src="scope.row.titleImg" />
+            <img style="display:block;width: auto;height: 80px;" v-if="scope.row.titleImg" :src="baseUrl + scope.row.titleImg" />
           </div>
         </template>
       </el-table-column>
@@ -139,7 +139,7 @@
                   tag="ul">
                   <li :key="file.url" class="el-upload-list__item ele-upload-list__item-content"
                     v-for="(file, index) in fileList">
-                    <el-link :href="`${baseUrl}${file.url}`" :underline="false" target="_blank">
+                    <el-link :href="file.url" :underline="false" target="_blank">
                       <span class="el-icon-document"> {{ getFileName(file.name) }} </span>
                     </el-link>
                     <div class="ele-upload-list__item-content-action">
@@ -256,14 +256,6 @@ export default {
           {
             required: true,
             message: '请上传封面',
-            trigger: 'change'
-          }
-        ],
-        videoList: [
-          {
-            required: true,
-            message: '请上传视频',
-            type: 'array',
             trigger: 'change'
           }
         ],
@@ -404,11 +396,11 @@ export default {
       getInfo(id).then(response => {
         this.form = response.data;
         this.fileList = this.form.videoList.map(o => {
-          return {...o, url: o.video, name: o.video}
+          return {...o, url: this.baseUrl + o.video, name: o.video, path: o.video}
         });
-        this.imgUploadList = this.form.titleImg?  [{url: this.form.titleImg, name: this.form.titleImg}] : []
+        this.imgUploadList = this.form.titleImg?  [{url: this.baseUrl + this.form.titleImg, name: this.form.titleImg, path: this.form.titleImg}] : []
         this.imgDetailFileList = this.form.imgList.map(o => {
-          return {...o, url: o.img, name: o.img}
+          return {...o, url: this.baseUrl + o.img, name: o.img, path: o.img}
         });
         this.open = true;
         this.title = "修改详情信息";
@@ -416,29 +408,29 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.form.titleImg = this.imgUploadList.length ? this.imgUploadList[0].url : ''
+      this.form.titleImg = this.imgUploadList.length ? this.imgUploadList[0].path : ''
       this.form.imgList = this.imgDetailFileList.length? this.imgDetailFileList.map(o => {
         let res = {
           ...o,
-          img: o.url
+          img: o.path
         }
         if(this.form.id){
           res.waterfallId = this.form.id
         }
         delete res.video
         return res
-      }) : ''
+      }) : []
       this.form.videoList = this.fileList.length? this.fileList.map(o => {
         let res = {
           ...o,
-          video: o.url
+          video: o.path
         }
         if(this.form.id){
           res.waterfallId = this.form.id
         }
         delete res.img
         return res
-      }) : ''
+      }) : []
       this.$refs["form"].validate(valid => {
         if (valid) {
           const postParams = JSON.parse(JSON.stringify(this.form))
@@ -460,7 +452,6 @@ export default {
     },
     /** 删除按钮操作 */
     handleDeletes(row) {
-      console.log(11)
       const ids = row.id || this.ids.map(o => o.id);
       this.$modal.confirm('是否确认删除编号为"' + (this.ids.length? this.ids.map(o=>o.number).join() : row.number) + '"的数据项？').then(function () {
         return delInfo(ids);
@@ -511,7 +502,7 @@ export default {
     // 上传成功回调
     handleUploadSuccess(res, file) {
       if (res.code === 200) {
-        this.fileList.push({ name: res.newFileName, url: res.url });
+        this.fileList.push({ name: res.newFileName, url: this.baseUrl + res.fileName, path: res.fileName });
         console.log(this.fileList)
         this.$modal.closeLoading();
         // this.uploadedSuccessfully();
@@ -625,7 +616,7 @@ export default {
     // 上传成功回调
     imgHandleUploadSuccess(res, file) {
       if (res.code === 200) {
-        this.imgUploadList.push({ name: res.newFileName, url: res.url });
+        this.imgUploadList.push({ name: res.newFileName, url: this.baseUrl + res.fileName, path: res.fileName });
         this.$modal.closeLoading();
       } else {
         this.number--;
@@ -638,7 +629,7 @@ export default {
     imgDetailHandleUploadSuccess(res,file) {
       console.log(res, file)
       if (res.code === 200) {
-        this.imgDetailFileList.push({ name: res.newFileName, url: res.url });
+        this.imgDetailFileList.push({ name: res.newFileName, url: this.baseUrl + res.fileName, path: res.fileName });
         this.$modal.closeLoading();
       } else {
         this.$modal.closeLoading();
@@ -653,7 +644,7 @@ export default {
     },
     // 预览
     handlePictureCardPreview(file) {
-      this.dialogImageUrl = this.baseUrl+file.url;
+      this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
         // 预览
