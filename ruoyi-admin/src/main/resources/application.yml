@@ -132,3 +132,8 @@ mybatis-plus:
   type-aliases-package: com.ruoyi.**.domain
   mapperLocations: classpath*:mapper/**/*Mapper.xml,classpath*:**/mapper/xml/*Mapper.xml,classpath*:activiti/*Mapper.xml,classpath*:**/*Mapper.xml
   config-location: classpath:mybatis/mybatis-config.xml
+qiniu:
+  accessKey: aKCwrwLTHqThg5z61bfMceDdzfnOhSQeE9nz8rXr #公钥
+  secretKey: riU8PSRKHs5xCt9PVbO144O3ncrs_CntbD2l916l #私钥
+  bucketName: banner #新建的存储空间名称
+  path: http://qiniu.feelearth.cn/ # 加速的域名

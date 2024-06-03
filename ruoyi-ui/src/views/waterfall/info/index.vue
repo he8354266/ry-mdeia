@@ -181,7 +181,7 @@ export default {
     // 文件类型, 例如['png', 'jpg', 'jpeg']
     fileType: {
       type: Array,
-      default: () => ['mp4', 'avi', 'rmvb', 'wmv']
+      default: () => ['mp4', 'avi', 'rmvb', 'wmv','mpeg','asf','mov','divx','flv','FLV','3gp','mkv','rmvb','webm','ape','dvd','dvr']
     },
     // 是否显示提示
     isShowTip: {
