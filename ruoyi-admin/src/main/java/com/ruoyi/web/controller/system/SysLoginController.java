@@ -1,5 +1,7 @@
 package com.ruoyi.web.controller.system;
 
+import com.ruoyi.framework.web.domain.LoginSms;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,68 +21,107 @@ import com.ruoyi.system.service.ISysMenuService;
 
 /**
  * 登录验证
- * 
+ *
  * @author ruoyi
  */
 @RestController
-public class SysLoginController
-{
-    @Autowired
-    private SysLoginService loginService;
+public class SysLoginController {
 
-    @Autowired
-    private ISysMenuService menuService;
+  @Autowired
+  private SysLoginService loginService;
 
-    @Autowired
-    private SysPermissionService permissionService;
+  @Autowired
+  private ISysMenuService menuService;
 
-    /**
-     * 登录方法
-     * 
-     * @param loginBody 登录信息
-     * @return 结果
-     */
-    @PostMapping("/login")
-    public AjaxResult login(@RequestBody LoginBody loginBody)
-    {
-        AjaxResult ajax = AjaxResult.success();
-        // 生成令牌
-        String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
-                loginBody.getUuid());
-        ajax.put(Constants.TOKEN, token);
-        return ajax;
+  @Autowired
+  private SysPermissionService permissionService;
+
+  /**
+   * 登录方法
+   *
+   * @param loginBody 登录信息
+   * @return 结果
+   */
+  @PostMapping("/login")
+  public AjaxResult login(@RequestBody LoginBody loginBody) {
+    AjaxResult ajax = AjaxResult.success();
+    // 生成令牌
+    String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(),
+        loginBody.getCode(),
+        loginBody.getUuid());
+    ajax.put(Constants.TOKEN, token);
+    return ajax;
+  }
+
+  /**
+   * 发送手机验证码
+   *
+   * @param loginSms 登录信息
+   * @return 结果
+   */
+  @PostMapping("/sendSms")
+  public AjaxResult sendSms(@RequestBody LoginSms loginSms) throws IOException {
+    loginService.sendSms(loginSms);
+    return AjaxResult.success();
+  }
+
+  /**
+   * 获取登录状态
+   *
+   * @param loginSms 登录信息
+   * @return 结果
+   */
+  @PostMapping("/getLoginState")
+  public AjaxResult getLoginState(@RequestBody LoginSms loginSms) throws IOException {
+    boolean loginState = loginService.getLoginState(loginSms);
+    return loginState ? AjaxResult.success() : AjaxResult.error();
+  }
+
+  /**
+   * 手机验证码登录
+   *
+   * @param loginSms 登录信息
+   * @return 结果
+   */
+  @PostMapping("/loginBySms")
+  public AjaxResult loginBySms(@RequestBody LoginSms loginSms) {
+    boolean loginBySms = loginService.loginBySms(loginSms);
+    if (loginBySms) {
+      return AjaxResult.success();
+    } else {
+      return AjaxResult.error();
     }
+  }
 
-    /**
-     * 获取用户信息
-     * 
-     * @return 用户信息
-     */
-    @GetMapping("getInfo")
-    public AjaxResult getInfo()
-    {
-        SysUser user = SecurityUtils.getLoginUser().getUser();
-        // 角色集合
-        Set<String> roles = permissionService.getRolePermission(user);
-        // 权限集合
-        Set<String> permissions = permissionService.getMenuPermission(user);
-        AjaxResult ajax = AjaxResult.success();
-        ajax.put("user", user);
-        ajax.put("roles", roles);
-        ajax.put("permissions", permissions);
-        return ajax;
-    }
 
-    /**
-     * 获取路由信息
-     * 
-     * @return 路由信息
-     */
-    @GetMapping("getRouters")
-    public AjaxResult getRouters()
-    {
-        Long userId = SecurityUtils.getUserId();
-        List<SysMenu> menus = menuService.selectMenuTreeByUserId(userId);
-        return AjaxResult.success(menuService.buildMenus(menus));
-    }
+  /**
+   * 获取用户信息
+   *
+   * @return 用户信息
+   */
+  @GetMapping("getInfo")
+  public AjaxResult getInfo() {
+    SysUser user = SecurityUtils.getLoginUser().getUser();
+    // 角色集合
+    Set<String> roles = permissionService.getRolePermission(user);
+    // 权限集合
+    Set<String> permissions = permissionService.getMenuPermission(user);
+    AjaxResult ajax = AjaxResult.success();
+    ajax.put("user", user);
+    ajax.put("roles", roles);
+    ajax.put("permissions", permissions);
+    return ajax;
+  }
+
+  /**
+   * 获取路由信息
+   *
+   * @return 路由信息
+   */
+  @GetMapping("getRouters")
+  public AjaxResult getRouters() {
+    Long userId = SecurityUtils.getUserId();
+    List<SysMenu> menus = menuService.selectMenuTreeByUserId(userId);
+    return AjaxResult.success(menuService.buildMenus(menus));
+  }
 }
