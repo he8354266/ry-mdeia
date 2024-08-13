@@ -146,7 +146,7 @@ public class SysLoginService {
     //发送验证码
     //随机编号
     int mobileCode = (int) ((Math.random() * 9 + 1) * 100000);
-    String smsState = SlSendSmsUtil.SMS(loginSms.getPhoneNumber(), String.valueOf(mobileCode));
+    String smsState = SendSmsUtil.SMS(loginSms.getPhoneNumber(), String.valueOf(mobileCode));
     if (smsState.equals("2")) {
       redisCache.setCacheObject("smsCode:" + loginSms.getPhoneNumber(), mobileCode, 190000,
           TimeUnit.MILLISECONDS);
