@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class PwdManagerServiceImpl extends
     ServiceImpl<PwdManagerMapper,PwdManager> implements IPwdManagerService
 {
-    @Autowired
+    @Resource
     private PwdManagerMapper pwdManagerMapper;
 
     /**

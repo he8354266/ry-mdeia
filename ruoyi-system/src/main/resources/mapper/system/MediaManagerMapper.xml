@@ -9,11 +9,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="waterfallId"    column="waterfall_id"    />
         <result property="img"    column="img"    />
         <result property="video"    column="video"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateBy"    column="update_by"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="remark"    column="remark"    />
     </resultMap>
 
     <sql id="selectRyMediaManagerVo">

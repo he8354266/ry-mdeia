@@ -19,10 +19,7 @@ public class LoginSms {
    * 短信验证码
    */
   private String smsCode;
-  /**
-   * 机器人验证 0；未验证 1：已验证
-   */
-  private Integer robotState;
+
 
 
 }

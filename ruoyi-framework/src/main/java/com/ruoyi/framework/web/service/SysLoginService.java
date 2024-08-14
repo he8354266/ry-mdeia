@@ -5,7 +5,10 @@ import com.ruoyi.framework.tool.sms.SlSendSmsUtil;
 import com.ruoyi.framework.web.domain.LoginSms;
 
 import com.ruoyi.framework.tool.sms.SendSmsUtil;
+import com.ruoyi.system.domain.PhoneLogin;
+import com.ruoyi.system.service.IPhoneLoginService;
 import java.io.IOException;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import javax.annotation.Resource;
@@ -59,7 +62,8 @@ public class SysLoginService {
 
   @Autowired
   private ISysConfigService configService;
-
+  @Autowired
+  private IPhoneLoginService phoneLoginService;
   private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("^1[3-9]\\d{9}$");
 
   /**
@@ -70,12 +74,6 @@ public class SysLoginService {
   public boolean loginBySms(LoginSms loginSms) {
     if (ObjectUtils.isEmpty(loginSms.getPhoneNumber())) {
       throw new ServiceException("手机号不能为空");
-    }
-    if(ObjectUtils.isEmpty(loginSms.getRobotState())) {
-     throw new ServiceException("机器人验证状态不能为空");
-    }
-    if (loginSms.getRobotState() == 0) {
-      throw new ServiceException("机器人验证未通过");
     }
     if (ObjectUtils.isEmpty(loginSms.getSmsCode())) {
       throw new ServiceException("验证码不能为空");
@@ -89,8 +87,13 @@ public class SysLoginService {
       if (!String.valueOf(smsCode).equals(loginSms.getSmsCode())) {
         throw new ServiceException("验证码错误");
       } else {
+        //登录成功
         redisCache.setCacheObject("smsCache", loginSms.getPhoneNumber(), 1,
             TimeUnit.HOURS);
+        PhoneLogin phoneLogin = new PhoneLogin();
+        phoneLogin.setPhoneNumber(loginSms.getPhoneNumber());
+        phoneLogin.setLoginTime(new Date());
+        phoneLoginService.save(phoneLogin);
         return true;
       }
     } else {
@@ -113,6 +116,10 @@ public class SysLoginService {
     }
     String smsCache = redisCache.getCacheObject("smsCache");
     if (ObjectUtils.isNotEmpty(smsCache)) {
+      PhoneLogin phoneLogin = new PhoneLogin();
+      phoneLogin.setPhoneNumber(loginSms.getPhoneNumber());
+      phoneLogin.setLoginTime(new Date());
+      phoneLoginService.save(phoneLogin);
       return true;
     } else {
       return false;
@@ -129,12 +136,6 @@ public class SysLoginService {
     if (ObjectUtils.isEmpty(loginSms.getPhoneNumber())) {
       throw new ServiceException("手机号不能为空");
     }
-    if(ObjectUtils.isEmpty(loginSms.getRobotState())) {
-      throw new ServiceException("机器人验证状态不能为空");
-    }
-    if (loginSms.getRobotState() == 0) {
-      throw new ServiceException("机器人验证未通过");
-    }
     boolean isValid = isValidPhoneNumber(loginSms.getPhoneNumber());
     if (!isValid) {
       throw new ServiceException("手机号格式错误");
@@ -147,6 +148,7 @@ public class SysLoginService {
     //随机编号
     int mobileCode = (int) ((Math.random() * 9 + 1) * 100000);
     String smsState = SendSmsUtil.SMS(loginSms.getPhoneNumber(), String.valueOf(mobileCode));
+    //发送成功
     if (smsState.equals("2")) {
       redisCache.setCacheObject("smsCode:" + loginSms.getPhoneNumber(), mobileCode, 190000,
           TimeUnit.MILLISECONDS);
