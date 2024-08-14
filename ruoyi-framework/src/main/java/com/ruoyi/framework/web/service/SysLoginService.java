@@ -115,7 +115,7 @@ public class SysLoginService {
       throw new ServiceException("手机号格式错误");
     }
     String smsCache = redisCache.getCacheObject("smsCache");
-    if (ObjectUtils.isNotEmpty(smsCache)) {
+    if (ObjectUtils.isNotEmpty(smsCache) && loginSms.getPhoneNumber().equals(smsCache)) {
       PhoneLogin phoneLogin = new PhoneLogin();
       phoneLogin.setPhoneNumber(loginSms.getPhoneNumber());
       phoneLogin.setLoginTime(new Date());

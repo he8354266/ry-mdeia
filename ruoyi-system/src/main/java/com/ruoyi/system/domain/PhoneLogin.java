@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -38,6 +39,10 @@ public class PhoneLogin {
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   @Excel(name = "登录时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
   private Date loginTime;
+  @TableField(exist = false)
+  private Date loginStartTime;
+  @TableField(exist = false)
+  private Date loginEndTime;
 
   /**
    * 创建者

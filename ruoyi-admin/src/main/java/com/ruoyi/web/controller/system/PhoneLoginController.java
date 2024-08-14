@@ -1,9 +1,12 @@
 package com.ruoyi.web.controller.system;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ruoyi.system.domain.PhoneLogin;
 import com.ruoyi.system.service.IPhoneLoginService;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
@@ -26,68 +29,74 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 手机登录信息Controller
- * 
+ *
  * @author ruoyi
  * @date 2024-08-14
  */
 @RestController
 @RequestMapping("/login/login")
-public class PhoneLoginController extends BaseController
-{
-    @Autowired
-    private IPhoneLoginService phoneLoginService;
+public class PhoneLoginController extends BaseController {
 
-    /**
-     * 查询手机登录信息列表
-     */
-    @GetMapping("/list")
-    public TableDataInfo list(PhoneLogin phoneLogin)
-    {
-        startPage();
-        QueryWrapper<PhoneLogin> queryWrapper = Wrappers.query(phoneLogin);
-        List<PhoneLogin> list = phoneLoginService.list(queryWrapper);
-        return getDataTable(list);
+  @Autowired
+  private IPhoneLoginService phoneLoginService;
+
+  /**
+   * 查询手机登录信息列表
+   */
+  @GetMapping("/list")
+  public TableDataInfo list(PhoneLogin phoneLogin) {
+    startPage();
+    DateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
+    QueryWrapper<PhoneLogin> queryWrapper = Wrappers.query();
+    if (ObjectUtils.isNotEmpty(phoneLogin.getPhoneNumber())) {
+      queryWrapper.like("phone_number", phoneLogin.getPhoneNumber());
     }
-
-
-
-    /**
-     * 获取手机登录信息详细信息
-     */
-    @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
-        return success(phoneLoginService.getById(id));
+    if (ObjectUtils.isNotEmpty(phoneLogin.getLoginStartTime())
+        && ObjectUtils.isNotEmpty(phoneLogin.getLoginEndTime())) {
+      queryWrapper.between("login_time",
+          new StringBuilder(dateformat.format(phoneLogin.getLoginStartTime())).append(
+              " 00:00:00").toString(),
+          new StringBuilder(dateformat.format(phoneLogin.getLoginEndTime())).append(" 23:59:59")
+              .toString());
     }
+    List<PhoneLogin> list = phoneLoginService.list(queryWrapper);
+    return getDataTable(list);
+  }
 
-    /**
-     * 新增手机登录信息
-     */
-    @Log(title = "手机登录信息", businessType = BusinessType.INSERT)
-    @PostMapping
-    public AjaxResult add(@RequestBody PhoneLogin phoneLogin)
-    {
-        return toAjax(phoneLoginService.save(phoneLogin));
-    }
 
-    /**
-     * 修改手机登录信息
-     */
-    @Log(title = "手机登录信息", businessType = BusinessType.UPDATE)
-    @PutMapping
-    public AjaxResult edit(@RequestBody PhoneLogin phoneLogin)
-    {
-        return toAjax(phoneLoginService.saveOrUpdate(phoneLogin));
-    }
+  /**
+   * 获取手机登录信息详细信息
+   */
+  @GetMapping(value = "/{id}")
+  public AjaxResult getInfo(@PathVariable("id") Long id) {
+    return success(phoneLoginService.getById(id));
+  }
 
-    /**
-     * 删除手机登录信息
-     */
-    @PreAuthorize("@ss.hasPermi('login:login:remove')")
-    @Log(title = "手机登录信息", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
-        return toAjax(phoneLoginService.removeByIds(Arrays.asList(ids)));
-    }
+  /**
+   * 新增手机登录信息
+   */
+  @Log(title = "手机登录信息", businessType = BusinessType.INSERT)
+  @PostMapping
+  public AjaxResult add(@RequestBody PhoneLogin phoneLogin) {
+    return toAjax(phoneLoginService.save(phoneLogin));
+  }
+
+  /**
+   * 修改手机登录信息
+   */
+  @Log(title = "手机登录信息", businessType = BusinessType.UPDATE)
+  @PutMapping
+  public AjaxResult edit(@RequestBody PhoneLogin phoneLogin) {
+    return toAjax(phoneLoginService.saveOrUpdate(phoneLogin));
+  }
+
+  /**
+   * 删除手机登录信息
+   */
+  @PreAuthorize("@ss.hasPermi('login:login:remove')")
+  @Log(title = "手机登录信息", businessType = BusinessType.DELETE)
+  @DeleteMapping("/{ids}")
+  public AjaxResult remove(@PathVariable Long[] ids) {
+    return toAjax(phoneLoginService.removeByIds(Arrays.asList(ids)));
+  }
 }
