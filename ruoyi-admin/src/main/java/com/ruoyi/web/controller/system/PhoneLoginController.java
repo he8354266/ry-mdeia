@@ -34,7 +34,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2024-08-14
  */
 @RestController
-@RequestMapping("/login/login")
+@RequestMapping("/phonelogin")
 public class PhoneLoginController extends BaseController {
 
   @Autowired
