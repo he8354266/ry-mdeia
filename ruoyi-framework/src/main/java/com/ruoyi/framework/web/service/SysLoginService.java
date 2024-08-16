@@ -150,7 +150,7 @@ public class SysLoginService {
     String smsState = SendSmsUtil.SMS(loginSms.getPhoneNumber(), String.valueOf(mobileCode));
     //发送成功
     if (smsState.equals("2")) {
-      redisCache.setCacheObject("smsCode:" + loginSms.getPhoneNumber(), mobileCode, 190000,
+      redisCache.setCacheObject("smsCode:" + loginSms.getPhoneNumber(), mobileCode, 60000,
           TimeUnit.MILLISECONDS);
     } else {
       throw new ServiceException("发送失败");

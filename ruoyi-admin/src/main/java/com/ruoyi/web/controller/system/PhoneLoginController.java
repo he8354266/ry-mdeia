@@ -59,6 +59,7 @@ public class PhoneLoginController extends BaseController {
           new StringBuilder(dateformat.format(phoneLogin.getLoginEndTime())).append(" 23:59:59")
               .toString());
     }
+    queryWrapper.orderByDesc("login_time");
     List<PhoneLogin> list = phoneLoginService.list(queryWrapper);
     return getDataTable(list);
   }
