@@ -1,6 +1,7 @@
 package com.ruoyi.framework.web.service;
 
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.ruoyi.framework.tool.sms.DxbSendSmsUtil;
 import com.ruoyi.framework.tool.sms.SlSendSmsUtil;
 import com.ruoyi.framework.web.domain.LoginSms;
 
@@ -88,7 +89,8 @@ public class SysLoginService {
         throw new ServiceException("验证码错误");
       } else {
         //登录成功
-        redisCache.setCacheObject("smsCache", loginSms.getPhoneNumber(), 1,
+        redisCache.setCacheObject("smsCache:" + loginSms.getPhoneNumber(),
+            loginSms.getPhoneNumber(), 1,
             TimeUnit.HOURS);
         PhoneLogin phoneLogin = new PhoneLogin();
         phoneLogin.setPhoneNumber(loginSms.getPhoneNumber());
@@ -114,7 +116,7 @@ public class SysLoginService {
     if (!isValid) {
       throw new ServiceException("手机号格式错误");
     }
-    String smsCache = redisCache.getCacheObject("smsCache");
+    String smsCache = redisCache.getCacheObject("smsCache:" + loginSms.getPhoneNumber());
     if (ObjectUtils.isNotEmpty(smsCache) && loginSms.getPhoneNumber().equals(smsCache)) {
       PhoneLogin phoneLogin = new PhoneLogin();
       phoneLogin.setPhoneNumber(loginSms.getPhoneNumber());
